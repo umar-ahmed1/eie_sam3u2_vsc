@@ -92,6 +92,9 @@ Promises:
 */
 void UserApp2Initialize(void)
 {
+  LedOn(RED3);
+  LedOn(GREEN3);
+
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -140,7 +143,45 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp2SM_Idle(void)
 {
-    
+
+    LedOff(BLUE0);
+    LedOff(BLUE1);
+
+    static bool aBoolPasswordFlags[] = {FALSE, FALSE, FALSE, FALSE};
+    static ButtonNameType aCorrectPassword[] = {BUTTON0,BUTTON1,BUTTON1,BUTTON0};
+    static u8 currentIndex = 0;
+    static bool boolResult = TRUE;
+
+
+    if(WasButtonPressed(BUTTON0) ){
+      LedOn(BLUE0);
+      if(aCorrectPassword[currentIndex] == BUTTON0){
+        aBoolPasswordFlags[currentIndex] = TRUE;
+      }
+      currentIndex +=1;
+      ButtonAcknowledge(BUTTON0);
+    }
+    if(WasButtonPressed(BUTTON1)){
+      LedOn(BLUE1);
+      if(aCorrectPassword[currentIndex] == BUTTON1){
+        aBoolPasswordFlags[currentIndex] = TRUE;
+      }
+      currentIndex +=1;
+      ButtonAcknowledge(BUTTON1);
+    }
+
+    if(IsButtonHeld(BUTTON0,2000) && IsButtonHeld(BUTTON1,2000)){
+      for (u8 i = 0; i < (sizeof(aBoolPasswordFlags) / sizeof(bool)); i++){
+        boolResult = boolResult && aBoolPasswordFlags[i];
+      }
+      if (boolResult){
+        LedOff(RED3);
+      } else {
+        LedOff(GREEN3);
+        LedOn(RED3);
+      }
+    }
+  
 } /* end UserApp2SM_Idle() */
      
 
