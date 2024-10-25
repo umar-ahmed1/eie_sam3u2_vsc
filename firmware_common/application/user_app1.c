@@ -92,7 +92,11 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
-  /* If good initialization, set state to Idle */
+  /* If good initialization, set state to Idle */\
+  for (u8 i = 0; i < (U8_TOTAL_LEDS - 1); i++){
+    LedOff((LedNameType)i);
+  }
+
   if( 1 )
   {
     UserApp1_pfStateMachine = UserApp1SM_Idle;
@@ -140,7 +144,77 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
-  
+  static u16 u16Counter = 0;
+  static u8 u8Counter = 0;
+
+  static u8 u8ColorIndex = 0;
+
+  static u8 aau8Color[][3] = {
+    {RED0,0xff,0xff}, // RED
+    {RED0,GREEN0,0xff}, // YELLOW
+    {0xff,GREEN0,0xff}, // GREEN
+    {0xff,GREEN0,BLUE0}, // CYAN
+    {0xff,0xff,BLUE0}, // BLUE
+    {RED0,0xff,BLUE0}, // PURPLE
+    {RED0,GREEN0,BLUE0}, // WHITE
+  };
+
+  u8 u8Offset = 0;
+
+  u16Counter ++;
+  if (u16Counter % 250 == 0) {
+    u8Counter ++;
+    if (u8Counter < 8){
+      u8ColorIndex = u8Counter;
+    } else {
+      u8ColorIndex = u8Counter - 9;
+    }
+
+    if (u8Counter & 0x01){
+      u8Offset = 0; //diff between led of same color ex: RED3 - RED0 = 3
+      for (u8 j = 0; j < 3; j ++){
+        if(aau8Color[u8ColorIndex][j] != 0xff){
+          LedOn((aau8Color[u8ColorIndex][j]) + u8Offset);
+        }
+      }
+    }
+
+    if (u8Counter & 0x02){
+      u8Offset = 1; //diff between led of same color ex: RED3 - RED0 = 3
+      for (u8 j = 0; j < 3; j ++){
+        if(aau8Color[u8ColorIndex][j] != 0xff){
+          LedOn((aau8Color[u8ColorIndex][j]) + u8Offset);
+        }
+      }
+    }
+
+    if (u8Counter & 0x04){
+      u8Offset = 2; //diff between led of same color ex: RED3 - RED0 = 3
+      for (u8 j = 0; j < 3; j ++){
+        if(aau8Color[u8ColorIndex][j] != 0xff){
+          LedOn((aau8Color[u8ColorIndex][j]) + u8Offset);
+        }
+      }
+    }
+
+    if (u8Counter & 0x08){
+      u8Offset = 3; //diff between led of same color ex: RED3 - RED0 = 3
+      for (u8 j = 0; j < 3; j ++){
+        if(aau8Color[u8ColorIndex][j] != 0xff){
+          LedOn((aau8Color[u8ColorIndex][j]) + u8Offset);
+        }
+      }
+    }
+
+    if (u8Counter == 16){
+      u8Counter = 0;
+      /* If good initialization, set state to Idle */\
+      for (u8 i = 0; i < (U8_TOTAL_LEDS - 1); i++){
+        LedOff((LedNameType)i);
+      }
+    }
+  }
+
 } /* end UserApp1SM_Idle() */
      
 
