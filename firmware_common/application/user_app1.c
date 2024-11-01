@@ -92,6 +92,11 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+
+  PWMAudioSetFrequency(BUZZER1, 500);
+  for (u8 i = 0; i < (U8_TOTAL_LEDS - 1); i++) {
+    LedOff((LedNameType)i);
+  }
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -140,7 +145,34 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
-  
+  static u16 au16Notes[] = {C4, D4, E4, F4, G4, A4, B4, C5};
+  static u16 au16MaryNotes[] = {C4,D4,E4,G4};
+  static u16 au16MaryLeds[] = {BLUE0,BLUE1,BLUE2,BLUE3};
+  static u8 u8NoteIndex = 0;
+
+  if(WasButtonPressed(BUTTON1)){
+    ButtonAcknowledge(BUTTON1);
+    u8NoteIndex ++;
+    
+    if (u8NoteIndex == (u8)(sizeof(au16MaryNotes) / sizeof(u16))){
+      u8NoteIndex = 0;
+    }
+
+    for (u8 i = 0; i < (u8)(sizeof(au16MaryNotes) / sizeof(u16)); i++){
+      if (i == u8NoteIndex){
+        LedOn(au16MaryLeds[i]);
+      } else {
+        LedOff(au16MaryLeds[i]);
+      }
+    }
+    PWMAudioSetFrequency(BUZZER1, au16MaryNotes[u8NoteIndex]);
+  }  
+  if (IsButtonPressed(BUTTON0)){
+    PWMAudioOn(BUZZER1);
+  }
+  else {
+    PWMAudioOff(BUZZER1);
+  }
 } /* end UserApp1SM_Idle() */
      
 
