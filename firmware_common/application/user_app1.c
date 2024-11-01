@@ -145,34 +145,97 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
-  static u16 au16Notes[] = {C4, D4, E4, F4, G4, A4, B4, C5};
-  static u16 au16MaryNotes[] = {C4,D4,E4,G4};
-  static u16 au16MaryLeds[] = {BLUE0,BLUE1,BLUE2,BLUE3};
-  static u8 u8NoteIndex = 0;
+  static u16 blueLEDs[] = {BLUE0, BLUE1, BLUE2, BLUE3};
+  static u16 furElise[] = {
+    E4, D4S, E4, D4S, E4, B3, D4, C4, A3, C4, E4, A3, B3, E4, G4S, B3, C4, E4, 
+    E4, D4S, E4, D4S, E4, B3, D4, C4, A3, C4, E4, A3, B3, E4, C4, B3, A3, B3, 
+    C4, D4, E4, G4, F4, E4, D4, F4, E4, D4, C4, E4, D4, C4, B3, E4, D4S, E4, 
+    D4S, E4, B3, D4, C4, A3, C4, E4, A3, B3, E4, G4S, B3, C4, E4, E4, D4S, 
+    E4, D4S, E4, B3, D4, C4, A3, C4, E4, A3, B3, E4, C4, B3, A3
+};
 
-  if(WasButtonPressed(BUTTON1)){
+  static u16 furElise2[] = {
+      E4, D4S, E4, D4S, E4, B3, D4, C4, A3,
+      C4, E4, A3, B3, C4,
+      E4, D4S, E4, D4S, E4, B3, D4, C4, A3,
+      C4, E4, A3, B3, C4, B3, A3,
+      B3, C4, D4, E4, G4, F4, E4, D4, C4, E4, D4, C4,
+      E4, D4S, E4, D4S, E4, B3, D4, C4, A3,
+      C4, E4, A3, B3, C4,
+      E4, D4S, E4, D4S, E4, B3, D4, C4, A3,
+      C4, E4, A3, B3, C4, B3, A3
+  };
+
+  static u16 durations[] = {
+    125, 125, 125, 125, 125, 125, 125, 125, 500, 125, 125, 125, 125, 125, 125, 125, 500, 125,
+    125, 125, 125, 125, 125, 125, 250, 500, 125, 125, 125, 125, 125, 125, 250, 250, 125, 125,
+    125, 250, 500, 125, 125, 125, 125, 125, 125, 250, 250, 125, 125, 125, 250, 125, 125, 125,
+    125, 250, 125, 125, 125, 125, 500, 125, 125, 125, 125, 125, 125, 125, 500, 125, 125, 125,
+    125, 125, 125, 125, 500, 125, 125, 125, 125, 125, 125, 125, 250
+};
+
+static u16 durations2[] = {
+    125, 125, 125, 125, 125, 125, 125, 125, 500,
+    125, 125, 125, 125, 500,
+    125, 125, 125, 125, 125, 125, 125, 125, 500,
+    125, 125, 125, 125, 125, 125, 500,
+    125, 125, 125, 125, 125, 125, 125, 125, 500, 125, 125, 125,
+    125, 125, 125, 125, 125, 125, 125, 125, 500,
+    125, 125, 125, 125, 500,
+    125, 125, 125, 125, 125, 125, 125, 125, 500,
+    125, 125, 125, 125, 125, 125, 500
+};
+
+  static u16 ledIndex = 0;
+  static bool songPlaying = FALSE;
+  static u16 songIndex = 0;
+  static u16 waitTime = 200;
+
+  if (WasButtonPressed(BUTTON1)) {
     ButtonAcknowledge(BUTTON1);
-    u8NoteIndex ++;
-    
-    if (u8NoteIndex == (u8)(sizeof(au16MaryNotes) / sizeof(u16))){
-      u8NoteIndex = 0;
+    ledIndex++;
+
+    if (ledIndex == (u8)(sizeof(blueLEDs) / sizeof(u16))) {
+      ledIndex = 0;
     }
 
-    for (u8 i = 0; i < (u8)(sizeof(au16MaryNotes) / sizeof(u16)); i++){
-      if (i == u8NoteIndex){
-        LedOn(au16MaryLeds[i]);
+    for (u8 i = 0; i < 4; i++) {
+      if (i == ledIndex) {
+        LedOn(blueLEDs[i]);
       } else {
-        LedOff(au16MaryLeds[i]);
+        LedOff(blueLEDs[i]);
       }
     }
-    PWMAudioSetFrequency(BUZZER1, au16MaryNotes[u8NoteIndex]);
-  }  
-  if (IsButtonPressed(BUTTON0)){
-    PWMAudioOn(BUZZER1);
   }
-  else {
-    PWMAudioOff(BUZZER1);
+
+  if (WasButtonPressed(BUTTON0)) {
+    songPlaying = TRUE;
+
+    if (songPlaying) {
+      if (waitTime == 0) {
+        waitTime = 1.5 * durations2[songIndex];
+        PWMAudioSetFrequency(BUZZER1, furElise2[songIndex]);
+        PWMAudioOn(BUZZER1);
+
+        if (songIndex == (u8)(sizeof(furElise2) / sizeof(u16))) {
+          songIndex = 0;
+          songPlaying = FALSE;
+          ButtonAcknowledge(BUTTON0);
+        } else {
+          songIndex++;
+        }
+      } else {
+        waitTime--;
+      }
+    }
   }
+
+  // if (IsButtonPressed(BUTTON0)) {
+  //   PWMAudioOn(BUZZER1);
+  // } else {
+  //   PWMAudioOff(BUZZER1);
+  // }
+     
 } /* end UserApp1SM_Idle() */
      
 
