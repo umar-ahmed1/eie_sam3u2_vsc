@@ -53,6 +53,8 @@ extern volatile u32 G_u32SystemTime1ms;                   /*!< @brief From main.
 extern volatile u32 G_u32SystemTime1s;                    /*!< @brief From main.c */
 extern volatile u32 G_u32SystemFlags;                     /*!< @brief From main.c */
 extern volatile u32 G_u32ApplicationFlags;                /*!< @brief From main.c */
+extern u8 G_au8DebugScanfBuffer[DEBUG_SCANF_BUFFER_SIZE]; // From debug.c
+extern u8 G_u8DebugScanfCharCount;                        // From debug.c
 
 
 /***********************************************************************************************************************
@@ -92,6 +94,18 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+  u8 u8String[] = "A string to print that returns cursor to next line.\n\r";
+  u8 u8String2[] = "Here's a number: ";
+  u8 u8String3[] = "The 'cursor' was here.";
+  u32 u32Number = 1234567;
+
+  DebugPrintf(u8String);
+  DebugPrintf(u8String2);
+  DebugPrintNumber(u32Number);
+  DebugPrintf(u8String3);
+  DebugLineFeed();
+  DebugPrintf(u8String3);
+  DebugLineFeed();
   /* If good initialization, set state to Idle */
   if( 1 )
   {
