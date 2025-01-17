@@ -38,6 +38,7 @@ PROTECTED FUNCTIONS
 **********************************************************************************************************************/
 
 #include "configuration.h"
+#include <string.h>
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
@@ -164,7 +165,20 @@ static void UserApp1SM_Idle(void)
 {
   static u8 au8NumCharsMessage[] = "\n\rCharacters in buffer: ";
   static u8 au8BufferMessage[] = "\n\rBuffer Contents: \n\r";
+  static u8 au8FoundNameMessage[] = "\n\rCount of name Umar: ";
   u8 u8CharCount;
+  static u8 u8NameCount = 0;
+
+  //check the buffer every ms
+  if (strstr(G_au8DebugScanfBuffer,"umar") != NULL){
+    u8NameCount++;
+    DebugPrintf(au8FoundNameMessage);
+    DebugLineFeed();
+    DebugScanf(UserApp1_au8UserInputBuffer);
+  }
+  //DebugPrintf(au8BufferMessage);
+  //DebugLineFeed();
+  //DebugPrintf(G_au8DebugScanfBuffer);
 
   if (WasButtonPressed(BUTTON0)){
     ButtonAcknowledge(BUTTON0);
