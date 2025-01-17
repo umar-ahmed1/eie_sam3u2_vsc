@@ -92,6 +92,7 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+  LcdClearScreen();
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -140,6 +141,29 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
+  static u8 UserApp1_au8Name[] = "Umar";
+  static u16 u16CurrentRow = 0;
+  LcdClearScreen();
+  PixelAddressType sTestStringLocation = {u16CurrentRow, U16_LCD_LEFT_MOST_COLUMN};
+  LcdLoadString(UserApp1_au8Name, LCD_FONT_SMALL, &sTestStringLocation);
+
+  if (WasButtonPressed(BUTTON0)){
+    ButtonAcknowledge(BUTTON0);
+    if (u16CurrentRow < U16_LCD_BOTTOM_MOST_ROW) {
+      u16CurrentRow++;
+    } else {
+      u16CurrentRow = 0;
+    }
+  }
+
+  if (WasButtonPressed(BUTTON1)){
+    ButtonAcknowledge(BUTTON1);
+    if (u16CurrentRow < U16_LCD_BOTTOM_MOST_ROW) {
+      u16CurrentRow--;
+    } else {
+      u16CurrentRow = U16_LCD_BOTTOM_MOST_ROW;
+    }
+  }
   
 } /* end UserApp1SM_Idle() */
      
