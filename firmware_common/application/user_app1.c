@@ -192,6 +192,15 @@ static void UserApp1SM_WaitAntReady(void)
 /* Hold here until ANT confirms the channel is open */
 static void UserApp1SM_WaitChannelOpen(void)
 {
+
+  if (AntReadAppMessageBuffer()) {
+    if (G_eAntApiCurrentMessageClass == ANT_DATA) {
+
+    } else if (G_eAntApiCurrentMessageClass == ANT_TICK){
+
+    }
+  }
+
   if(AntRadioStatusChannel(U8_ANT_CHANNEL_USERAPP) == ANT_OPEN)
   {
     UserApp1_pfStateMachine = UserApp1SM_ChannelOpen;
@@ -206,7 +215,7 @@ static void UserApp1SM_ChannelOpen(void)
 {
   static u8 au8TestMessage[] = {0, 0, 0, 0, 0xA5, 0, 0, 0};
   static PixelAddressType sStringLocation;
-  u8 au8DataContent[] = "xxxxxxxxxxxxxxxx";
+  u8 au8DataContent[] = "unpaidinternxxxx";
 
   extern PixelBlockType G_sLcdClearLine7;  /* From lcd-NHD-C12864LZ.c */
 
